@@ -104,8 +104,13 @@ func main() {
 	}()
 
 	// --- Start Echo server ---
-	log.Println("server running at http://localhost:8080")
-	if err := e.Start(":8080"); err != nil && err != http.ErrServerClosed {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080" // fallback for local dev
+	}
+
+	log.Printf("server running at http://localhost:%s", port)
+	if err := e.Start(":" + port); err != nil && err != http.ErrServerClosed {
 		log.Fatalf("main server error: %v", err)
 	}
 
