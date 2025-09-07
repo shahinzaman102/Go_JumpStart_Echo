@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="dashboard">
+    <h1>Dashboard</h1>
+    <h3>Overview of the tasks and their progress</h3>
+    <ul>
+        {{range .}}
+            <li>
+                {{if .Done}}✅{{else}}⚠️{{end}} {{.Title}} {{.Progress}}%
+                {{if and (not .Done) .Due}} - due {{.Due.Format "02 Jan"}}{{end}}
+                {{if .Done}}
+                    <br>
+                    <a class="task-link" href="http://localhost:8080/">Test the 1st Built App</a>
+                {{else if eq .Title "Build the 2nd App"}}
+                    <br>
+                    <a class="task-link" href="/static/static_file.png">Check out the design layout for the 2nd App</a>
+                {{end}}
+            </li>
+        {{end}}
+    </ul>
+    <br>
+    <a href="/logout" style="margin-right: 20px;">Logout</a>
+    <a href="/form">Contact Form</a>
+</body>
+</html>

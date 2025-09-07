@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"> <!-- Sets character encoding to UTF-8. -->
+    <title>Your Orders</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <h1>Your Last 10 Orders</h1>
+
+    {{if .Orders}} <!-- .Orders is expected to be a slice (list) of order objects passed from the server. -->
+    <table border="1" cellpadding="5" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Album ID</th>
+                <th>Quantity</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range .Orders}}
+            <tr>
+                <td>{{.ID}}</td>
+                <td>{{.AlbumID}}</td>
+                <td>{{.Quantity}}</td>
+                <td>{{.Date}}</td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+    {{else}} <!-- If .Orders is empty or nil, display “No orders found.” -->
+    <p>No orders found.</p>
+    {{end}}
+
+    <div style="margin-top: 20px;">
+        <a href="/">Place a New Order with Orders API</a>
+        <a href="/login?redirect=/orders" style="margin-left: 20px;">Login to a different User</a>
+        <!-- It links to the login page and tells it to redirect back to /orders after a successful login. -->
+        <a href="/logout" style="margin-left: 20px;">Logout</a>
+    </div>
+</body>
+</html>

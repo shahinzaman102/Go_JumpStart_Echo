@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>WebSocket Test</title>
+  <style>
+    body { font-family: sans-serif; }
+    #log { background: #f4f4f4; padding: 10px; border: 1px solid #ccc; height: 300px; overflow-y: scroll; white-space: pre-wrap; }
+    #status { font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>WebSocket Echo Test</h1>
+  <div>Status: <span id="status">Disconnected</span></div>
+  <input id="message" placeholder="Type a message" />
+  <button onclick="sendMessage()">Send</button>
+  <pre id="log"></pre>
+
+  <script>
+    const log = document.getElementById('log');
+    const status = document.getElementById('status');
+    let ws;
+
+    function logMessage(message) {
+      const timestamp = new Date().toLocaleTimeString(); // current time
+      log.innerText += `[${timestamp}] ${message}\n`; // append message with timestamp
+      log.scrollTop = log.scrollHeight; // auto-scroll to bottom
+    }
+
+    function connectWebSocket() {
+      logMessage("Connecting to WebSocket...");
+      ws = new WebSocket("ws://localhost:8080/ws");
+      // Opens a WebSocket connection to server /ws.
+
+      // These functions react in real time to connection events.
+      ws.onopen = () => { // Event handlers: When connected
+        status.textContent = "Connected";
+        status.style.color = "green";
+        logMessage("✅ Connected to server");
+      };
+
+      // These functions react in real time to connection events.
+      ws.onmessage = e => { // Event handlers: When server sends a message
+        // ------------ 4 ------------
+        logMessage(`📩 Echo: ${e.data}`);
+      };
+
+      // These functions react in real time to connection events.
+      ws.onerror = e => { // Event handlers: If error happens
+        logMessage(`❌ WebSocket error: ${e.message || "Unknown error"}`);
+      };
+
+      // These functions react in real time to connection events.
+      ws.onclose = e => { // Event handlers: If disconnected
+        status.textContent = "Disconnected";
+        status.style.color = "red";
+        logMessage(`⚠️ Disconnected from server (Code: ${e.code})`);
+
+        // Reconnect logic: try to reconnect after a delay
+        setTimeout(() => {
+          logMessage("🔁 Reconnecting...");
+          connectWebSocket();
+        }, 3000); // If server disconnects, browser tries again after 3 sec.
+      };
+    }
+
+    function sendMessage() {
+      const msg = document.getElementById("message").value;
+      // That checks if the WebSocket connection is open and ready → only then ws.send(msg) will work.
+      if (ws.readyState === WebSocket.OPEN) {
+        // ------------ 2 ------------
+        ws.send(msg); // 👉 Sends user’s input to server.
+        logMessage(`📤 Sent: ${msg}`); // 👉 Server echoes it back → appears in log instantly.
+      } else {
+        logMessage("⚠️ Cannot send message — WebSocket is not connected.");
+      }
+    }
+
+    // Initialize
+    connectWebSocket();
+  </script>
+</body>
+</html>

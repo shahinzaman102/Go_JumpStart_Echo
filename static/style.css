@@ -1,0 +1,231 @@
+/* =======================
+   Variables
+======================= */
+:root {
+    --primary-color: #007bff;
+    --primary-hover: #0056b3;
+    --background-color: #f8f9fa;
+    --section-bg: #fff;
+    --text-color: #333;
+    --success-color: green;
+    --border-color: #ccc;
+    --pre-bg: #f1f1f1;
+    --pre-border: #ddd;
+}
+
+/* =======================
+   Global Body Styles
+======================= */
+body {
+    /* Arial → first choice font. sans-serif → fallback. If the system doesn’t have Arial, 
+    the browser picks another sans-serif font (like Helvetica, Roboto, etc.). */
+    font-family: Arial, sans-serif;
+    margin: 2rem; /* applies the same margin on all four sides */
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.5;
+}
+
+body.dashboard {
+    margin: 40px;
+    background-color: #f9f9f9;
+}
+
+body.login-required {
+    text-align: center;
+    margin-top: 50px;
+}
+
+/* =======================
+   Headings
+======================= */
+h1, h2, h3 {
+    color: var(--text-color);
+    margin-top: 0; /* because it's -> body { margin: 2rem; } applied before */
+    /* API Test UI - is inside the body tag with h1 */
+}
+
+h1 {
+    margin-bottom: 1rem;
+}
+
+h2 {
+    margin-bottom: 0.5rem;
+}
+
+h3 {
+    color: #666;
+    font-style: italic;
+    margin-bottom: 38px;
+}
+
+/* =======================
+   Sections
+======================= */
+section {
+    border: 1px solid var(--border-color);
+    padding: 15px;
+    margin: 15px 0; /* 15px to top and bottom, and 0 to left and right */
+    background-color: var(--section-bg);
+    border-radius: 8px;
+}
+
+/* =======================
+   Lists
+======================= */
+ul {
+    padding-left: 20px;
+}
+
+li {
+    margin-bottom: 15px;
+    font-size: 16px;
+}
+
+/* =======================
+   Links
+======================= */
+a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+body.dashboard a {
+    color: blue;
+    text-decoration: underline;
+}
+
+body.dashboard .task-link {
+    margin-left: 25px;
+    font-size: 14px;
+}
+
+body.login-required a {
+    font-weight: bold;
+}
+
+/* =======================
+   Forms & Inputs
+======================= */
+form {
+    margin-bottom: 20px;
+}
+
+form input,
+form textarea,
+form button,
+input[type="submit"] {
+    display: block;
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 10px;
+    padding: 10px 20px;
+    font-size: 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+form input:focus,
+form textarea:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 4px rgba(0, 123, 255, 0.4);
+}
+/* When an input or textarea inside a <form> is focused (clicked/typed in) 
+    → give it a blue outline, change border color, and add a glow (box-shadow).*/
+
+/* Submit buttons */
+form button,
+input[type="submit"] {
+    background-color: var(--primary-color);
+    border: none;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+form button:hover,
+input[type="submit"]:hover {
+    background-color: var(--primary-hover);
+}
+
+/* Required input styling */
+.required-input {
+    display: flex; /* makes the label + input sit in one row. */
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.required-input input {
+    flex: 1; /* tells the input to stretch and take up all remaining space, 
+    so it doesn’t shrink and the layout looks balanced. */
+}
+
+/* =======================
+   Preformatted Text
+======================= */
+pre {
+    background-color: var(--pre-bg);
+    border: 1px solid var(--pre-border);
+    padding: 8px;
+    overflow-x: auto;
+    white-space: pre-wrap; /* keep if wrapping long lines is desired */
+    border-radius: 5px;
+    font-size: 13px;
+}
+
+/* =======================
+   Success Messages
+======================= */
+.success {
+    color: var(--success-color);
+    font-weight: bold;
+}
+
+/* =======================
+   Input Validation States
+======================= */
+input.invalid,
+textarea.invalid {
+    border-color: red !important;
+    box-shadow: 0 0 4px rgba(255, 0, 0, 0.4) !important;
+}
+
+/* =======================
+   Responsive
+======================= */
+@media (max-width: 480px) {
+    body {
+        margin: 1rem;
+    }
+
+    form input,
+    form textarea,
+    form button {
+        max-width: 100%;
+    }
+}
+
+/* =======================
+   Form Notes
+======================= */
+.form-note {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 15px;
+    font-style: italic;
+}
+
+.required-asterisk {
+    color: red;
+    font-weight: bold;
+    font-size: 18px;
+    margin-left: 6px;
+}

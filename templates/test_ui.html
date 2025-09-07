@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>API Test UI</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+<h1>API Test UI</h1>
+<p>Interact with backend APIs directly from the browser. 
+GET = click or fill form, POST/DELETE = fill form and see response.</p>
+
+<!-- ---------------- Basic Pages ---------------- -->
+<section>
+<h2>Basic Pages</h2>
+
+<p><em>Note: The login flow uses <a href="https://pkg.go.dev/github.com/gorilla/sessions" target="_blank">sessions</a> 
+to track authentication and redirect users based on their original requested path (e.g., /dashboard or /orders).</em></p>
+
+<!-- This makes a clickable link to which if we click the browser send an HTTP GET request. -->
+<a href="/dashboard" target="_blank">Dashboard</a><br>
+<a href="/login" target="_blank">Login Form</a><br> 
+<a href="/form" target="_blank">Contact Form</a>
+</section>
+
+<!-- ---------------- Users API ---------------- -->
+<section>
+<h2>Users API</h2>
+<p class="form-note"><span class="required-asterisk">*</span> Required fields</p>
+<a href="/users" target="_blank">GET /users</a><br><br>
+<!-- novalidate disables the browser’s built-in form validation (like required fields or email format checks). -->
+<form id="get-user-by-id-form" novalidate>
+    <div class="required-input">
+        <input name="id" placeholder="User ID" required>
+        <span class="required-asterisk">*</span>
+    </div>
+    <button type="submit">GET /users/{id}</button>
+</form>
+<pre></pre> <!-- 👈 this is the "nextElementSibling" -->
+<!-- 
+<pre> in HTML means “preformatted text”.
+- It shows text exactly as it is (keeps spaces, tabs, newlines).
+- Browser does not collapse whitespace like it does in <div> or <p>.
+- Useful for showing code, logs, or API responses. 
+-->
+<form id="create-user-form" novalidate>
+    <div class="required-input">
+        <input name="username" placeholder="Username" required>
+        <span class="required-asterisk">*</span>
+    </div>
+    <div class="required-input">
+        <input name="password" placeholder="Password" required>
+        <span class="required-asterisk">*</span>
+    </div>
+    <button type="submit">POST /users</button>
+</form>
+<pre></pre>
+<form id="update-user-form" novalidate>
+    <div class="required-input">
+        <input name="id" placeholder="User ID" required>
+        <span class="required-asterisk">*</span>
+    </div>
+    <div class="required-input">
+        <input name="username" placeholder="New Username" required>
+        <span class="required-asterisk">*</span>
+    </div>
+    <div class="required-input">
+        <input name="password" placeholder="New Password" required>
+        <span class="required-asterisk">*</span>
+    </div>
+    <button type="submit">PUT /users/{id}</button>
+</form>
+<pre></pre>
+<form id="delete-user-form" novalidate>
+    <div class="required-input">
+        <input name="id" placeholder="User ID" required>
+        <span class="required-asterisk">*</span>
+    </div>
+    <button type="submit">DELETE /users/{id}</button>
+</form>
+<pre></pre>
+</section>
+
+<!-- ---------------- Books API ---------------- -->
+<section>
+<h2>Books API</h2>
+<p class="form-note"><span class="required-asterisk">*</span> Required fields</p>
+<a href="/books" target="_blank">GET /books</a><br>
+<a href="/books/total" target="_blank">GET /books/total</a><br><br>
+<form id="get-book-by-id-form" novalidate>
+    <div class="required-input">
+        <input name="id" placeholder="Book ID (number)" required>
+        <span class="required-asterisk">*</span>
+    </div>
+    <button type="submit">GET /books/{id}</button>
+</form>
+<pre></pre>
+<form id="create-book-form" novalidate>
+    <input name="id" placeholder="ID">
+    <div class="required-input">
+        <input name="title" placeholder="Title" required>
+        <span class="required-asterisk">*</span>
+    </div>
+    <div class="required-input">
+        <input name="author" placeholder="Author" required>
+        <span class="required-asterisk">*</span>
+    </div>
+    <div class="required-input">
+        <input name="price" placeholder="Price (e.g. 39.99)" required>
+        <span class="required-asterisk">*</span>
+    </div>
+    <button type="submit">POST /books</button>
+</form>
+<pre></pre>
+<form id="update-book-form" novalidate>
+    <div class="required-input">
+        <input name="id" placeholder="Book ID (number)" required>
+        <span class="required-asterisk">*</span>
+    </div>
+    <div class="required-input">
+        <input name="title" placeholder="New Title" required>
+        <span class="required-asterisk">*</span>
+    </div>
+    <div class="required-input">
+        <input name="author" placeholder="New Author" required>
+        <span class="required-asterisk">*</span>
+    </div>
+    <div class="required-input">
+        <input name="price" placeholder="New Price (e.g. 39.99)" required>
+        <span class="required-asterisk">*</span>
+    </div>
+    <button type="submit">PUT /books/{id}</button>
+</form>
+<pre></pre>
+<form id="delete-book-form" novalidate>
+    <div class="required-input">
+        <input name="id" placeholder="Book ID (number)" required>
+        <span class="required-asterisk">*</span>
+    </div>
+    <button type="submit">DELETE /books/{id}</button>
+</form>
+<pre></pre>
+</section>
+
+<!-- ---------------- Albums API ---------------- -->
+<section>
+<h2>Albums API</h2>
+<p class="form-note"><span class="required-asterisk">*</span> Required fields</p>
+<a href="/albums" target="_blank">GET /albums</a><br>
+<a href="/albums/artist/John%20Coltrane" target="_blank">GET /albums/artist/{name}</a><br>
+<a href="/albums/timeout" target="_blank">GET /albums/timeout</a><br><br>
+<form id="get-album-by-id-form" novalidate>
+    <div class="required-input">
+        <input name="id" placeholder="Album ID" required>
+        <span class="required-asterisk">*</span>
+    </div>
+    <button type="submit">GET /albums/{id}</button>
+</form>
+<pre></pre>
+<form id="can-purchase-form" novalidate>
+    <div class="required-input">
+        <input name="id" placeholder="Album ID" required>
+        <span class="required-asterisk">*</span>
+    </div>
+    <div class="required-input">
+        <input name="qty" placeholder="Quantity" required>
+        <span class="required-asterisk">*</span>
+    </div>
+    <button type="submit">GET /albums/{id}/can-purchase</button>
+</form>
+<pre></pre>
+<form id="create-album-form" novalidate>
+    <input name="id" placeholder="ID">
+    <div class="required-input">
+        <input name="title" placeholder="Title" required>
+        <span class="required-asterisk">*</span>
+    </div>
+    <div class="required-input">
+        <input name="artist" placeholder="Artist" required>
+        <span class="required-asterisk">*</span>
+    </div>
+    <div class="required-input">
+        <input name="price" placeholder="Price (e.g. 39.99)" required>
+        <span class="required-asterisk">*</span>
+    </div>
+    <div class="required-input">
+        <input name="quantity" placeholder="Quantity" required>
+        <span class="required-asterisk">*</span>
+    </div>
+    <button type="submit">POST /albums</button>
+</form>
+<pre></pre>
+</section>
+
+<!-- ---------------- Orders API ---------------- -->
+<section>
+<h2>Orders API</h2>
+<p class="form-note"><span class="required-asterisk">*</span> Required fields</p>
+<a href="/orders" target="_blank">GET /orders</a>
+
+<p><em>Note: On the initial fetch, a simulated 2s delay mimics an expensive database operation. 
+Subsequent fetches are served instantly from 
+<a href="https://pkg.go.dev/github.com/allegro/bigcache" target="_blank">cache,</a> 
+and orders are tied to the authenticated user, so each user only sees their own orders, even after 
+<a href="https://pkg.go.dev/github.com/gorilla/sessions" target="_blank">session</a>-based redirects.</em></p><br>
+
+<form id="create-order-form" novalidate>
+    <div class="required-input">
+        <input name="album_id" placeholder="Album ID" required>
+        <span class="required-asterisk">*</span>
+    </div>
+    <div class="required-input">
+        <input name="quantity" placeholder="Quantity" required>
+        <span class="required-asterisk">*</span>
+    </div>
+    <div class="required-input">
+        <input name="customer_id" placeholder="Customer ID" required>
+        <span class="required-asterisk">*</span>
+    </div>
+    <button type="submit">POST /orders</button>
+</form>
+<pre></pre>
+</section>
+
+<!-- ---------------- Misc ---------------- -->
+<section>
+<h2>Misc Endpoints</h2>
+<p class="form-note"><span class="required-asterisk">*</span> Required fields</p>
+<form id="customer-name-form" novalidate>
+    <div class="required-input">
+        <input name="id" placeholder="Customer ID" required>
+        <span class="required-asterisk">*</span>
+    </div>
+    <button type="submit">GET /customer-name?id={id}</button>
+</form>
+<pre></pre>
+<a href="/admin/multi-query" target="_blank">GET /admin/multi-query</a>
+</section>
+
+<!-- ---------------- Wiki Pages ---------------- -->
+<section>
+<h2>Wiki Pages</h2>
+<a href="/view" target="_blank">GET /view</a><br>
+</section>
+
+<!-- ---------------- JSON Utilities ---------------- -->
+<section>
+<h2>JSON Utilities</h2>
+<p class="form-note"><span class="required-asterisk">*</span> Required fields</p>
+<!-- Encode JSON -->
+<form id="json-encode-form" novalidate>
+    <div class="required-input">
+        <input name="username" placeholder="Username" required>
+        <span class="required-asterisk">*</span>
+    </div>
+    <div class="required-input">
+        <input name="password" placeholder="Password" required>
+        <span class="required-asterisk">*</span>
+    </div>
+    <button type="submit">Encode JSON</button>
+</form>
+<pre></pre> <!-- output for encode -->
+
+<!-- Decode JSON -->
+<form id="json-decode-form" novalidate>
+    <div class="required-input">
+        <input name="username" placeholder="Username" required>
+        <span class="required-asterisk">*</span>
+    </div>
+    <div class="required-input">
+        <input name="password" placeholder="Password" required>
+        <span class="required-asterisk">*</span>
+    </div>
+    <button type="submit">Decode JSON</button>
+</form>
+<pre></pre> <!-- output for decode -->
+</section>
+
+<!-- ---------------- WebSocket ---------------- -->
+<section>
+<h2>WebSocket Testing</h2>
+<p>To test the WebSocket endpoint manually, use the following commands in terminal:</p>
+<pre>
+npm install -g wscat
+wscat -c ws://localhost:8080/ws
+</pre>
+<a href="/websockets" target="_blank">GET /websockets</a>
+</section>
+
+<!-- ---------------- Concurrency ---------------- -->
+<section>
+  <h2>Concurrency Demos</h2>
+  <p>Click on any endpoint below to see the output directly in the browser:</p>
+
+  <a href="/concurrency/goroutines_waitgroup" target="_blank">Goroutines + WaitGroup</a><br>
+  <a href="/concurrency/channels_unbuffered" target="_blank">Unbuffered Channels</a><br>
+  <a href="/concurrency/buffered_channels" target="_blank">Buffered Channels</a><br>
+  <a href="/concurrency/mutex" target="_blank">Mutex</a><br>
+  <a href="/concurrency/rwmutex" target="_blank">RWMutex</a><br>
+  <a href="/concurrency/worker_pool" target="_blank">Worker Pool</a><br>
+  <a href="/concurrency/atomic_counters" target="_blank">Atomic Counters</a><br>
+  <a href="/concurrency/cond_synccond" target="_blank">Cond (sync.Cond)</a><br>
+  <a href="/concurrency/pool_once_map" target="_blank">Pool / Once / Map</a><br>
+  <a href="/concurrency/context_cancellation" target="_blank">Context Cancellation</a>
+</section>
+
+<!-- ---------------- Go Basics & Pathfinder ---------------- -->
+<section>
+<h2>Go Basics</h2>
+<a href="/go-basics" target="_blank">/go-basics</a>
+</section>
+
+<!-- ---------------- Algorithms Demo ---------------- -->
+<section>
+  <h2>Algorithms Demo</h2>
+  <h4>Finding the Shortest Path in a Grid City Using Brute Force & BFS Algorithms</h4>
+  <p class="guide">
+    Enter the start and end coordinates in <strong>row,col</strong> format.
+    Example: <code>0,0</code> for the top-left corner, <code>7,7</code> for the bottom-right corner.  
+    Valid values are between <code>0</code> and <code>7</code> for both row and column.
+  </p>
+
+  <p class="form-note"><span class="required-asterisk">*</span> Required fields</p>
+  <form id="pathfinder-form" novalidate>
+    <div class="required-input">
+      <input name="start" placeholder="Start (e.g. 0,0)" required>
+      <span class="required-asterisk">*</span>
+    </div>
+    <div class="required-input">
+      <input name="end" placeholder="End (e.g. 7,7)" required>
+      <span class="required-asterisk">*</span>
+    </div>
+    <button type="submit">GET /pathfinder</button>
+  </form>
+  <pre></pre>
+</section>
+
+<!-- ---------------- Runtime Errors ---------------- -->
+<section>
+    <h2>Runtime Errors Demo</h2>
+    <a href="/runtime-errors?type=divide" target="_blank">Divide by zero</a><br>
+    <a href="/runtime-errors?type=nilptr" target="_blank">Nil pointer dereference</a><br>
+    <a href="/runtime-errors?type=outofbounds" target="_blank">Out-of-bounds access</a><br>
+    <a href="/runtime-errors?type=typeassert" target="_blank">Type assertion failure</a>
+</section>
+
+<script src="/static/script.js"></script>
+
+</body>
+
+</html>

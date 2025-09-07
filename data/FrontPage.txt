@@ -1,0 +1,3 @@
+Welcome to the Go Wiki!
+
+Check out [Page1] to get started.

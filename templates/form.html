@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Contact Form</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <h1>Contact Us</h1>
+
+    {{if .Success}} <!-- checks the struct field Success. -->
+        <!-- Only shows success message and submitted values after POST. -->
+        <p class="success">Form submitted successfully!</p>
+        <p style="font-weight: bold;">Submitted Data:</p>
+        <p><strong>Email:</strong> {{.Email}}</p>
+        <p><strong>Subject:</strong> {{.Subject}}</p>
+        <p><strong>Message:</strong> {{.Message}}</p>
+        <br/>
+    {{end}}
+
+    <form method="POST" action="/form"> <!-- Submits to /form (the same handler). -->
+        <label>Email:</label><br>
+        <input type="email" name="email" required><br> <!-- required attributes enforce client-side validation. -->
+
+        <label>Subject:</label><br>
+        <input type="text" name="subject" required><br>
+
+        <label>Message:</label><br>
+        <textarea name="message" required></textarea><br>
+
+        <input type="submit" value="Send">
+    </form>
+</body>
+</html>
