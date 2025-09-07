@@ -28,8 +28,11 @@
 
     function connectWebSocket() {
       logMessage("Connecting to WebSocket...");
-      ws = new WebSocket("ws://localhost:8080/ws");
-      // Opens a WebSocket connection to server /ws.
+
+      // Use same host as page + correct protocol (ws:// or wss://)
+      const wsProtocol = location.protocol === "https:" ? "wss://" : "ws://";
+      const wsHost = location.host; // automatically gets your Render domain
+      ws = new WebSocket(wsProtocol + wsHost + "/ws");
 
       // These functions react in real time to connection events.
       ws.onopen = () => { // Event handlers: When connected
