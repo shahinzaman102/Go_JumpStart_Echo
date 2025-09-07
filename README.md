@@ -17,12 +17,12 @@
 
 ---
 
-### 🔗 Deployed URL →
+### 🔗 Deployed URL → <https://go-jumpstart-echo.onrender.com>
 
 ### 🔗 Get Started with the Project → [Project Running & Testing Guide](https://docs.google.com/document/d/1pVc9nQqw61TJvu8CowxVPOS0yeoB4pAWaCaUOBi5mqw/edit?usp=sharing)
 
 ---
 
-### 💡 For more details, see the [Go JumpStart – README](https://)
+### 💡 For more details, see the [Go JumpStart – README](https://github.com/shahinzaman102/Go_JumpStart/blob/main/README.md)
 
 ---
