@@ -30,6 +30,7 @@ to track authentication and redirect users based on their original requested pat
 <section>
 <h2>Users API</h2>
 <p class="form-note"><span class="required-asterisk">*</span> Required fields</p>
+<p class="api-description"><em>This API serves user data from a MySQL database.</em></p>
 <a href="/users" target="_blank">GET /users</a><br><br>
 <!-- novalidate disables the browser’s built-in form validation (like required fields or email format checks). -->
 <form id="get-user-by-id-form" novalidate>
@@ -88,6 +89,7 @@ to track authentication and redirect users based on their original requested pat
 <section>
 <h2>Books API</h2>
 <p class="form-note"><span class="required-asterisk">*</span> Required fields</p>
+<p class="api-description"><em>This API serves book data from an in-memory store.</em></p>
 <a href="/books" target="_blank">GET /books</a><br>
 <a href="/books/total" target="_blank">GET /books/total</a><br><br>
 <form id="get-book-by-id-form" novalidate>
@@ -149,6 +151,7 @@ to track authentication and redirect users based on their original requested pat
 <section>
 <h2>Albums API</h2>
 <p class="form-note"><span class="required-asterisk">*</span> Required fields</p>
+<p class="api-description"><em>This API serves album data from a MySQL database.</em></p>
 <a href="/albums" target="_blank">GET /albums</a><br>
 <a href="/albums/artist/John%20Coltrane" target="_blank">GET /albums/artist/{name}</a><br>
 <a href="/albums/timeout" target="_blank">GET /albums/timeout</a><br><br>
@@ -199,6 +202,7 @@ to track authentication and redirect users based on their original requested pat
 <section>
 <h2>Orders API</h2>
 <p class="form-note"><span class="required-asterisk">*</span> Required fields</p>
+<p class="api-description"><em>This API serves order data from a MySQL database.</em></p>
 <a href="/orders" target="_blank">GET /orders</a>
 
 <p><em>Note: On the initial fetch, a simulated 2s delay mimics an expensive database operation. 
@@ -229,6 +233,7 @@ and orders are tied to the authenticated user, so each user only sees their own 
 <section>
 <h2>Misc Endpoints</h2>
 <p class="form-note"><span class="required-asterisk">*</span> Required fields</p>
+<p class="api-description"><em>This API serves customer data from a MySQL database.</em></p>
 <form id="customer-name-form" novalidate>
     <div class="required-input">
         <input name="id" placeholder="Customer ID" required>
@@ -316,14 +321,14 @@ wscat -c ws://localhost:8080/ws
 <!-- ---------------- Algorithms Demo ---------------- -->
 <section>
   <h2>Algorithms Demo</h2>
-  <h4>Finding the Shortest Path in a Grid City Using Brute Force & BFS Algorithms</h4>
+  <p class="form-note"><span class="required-asterisk">*</span> Required fields</p>
+  <h4 class="algo-title">Finding the Shortest Path in a Grid City Using Brute Force & BFS Algorithms</h4>
   <p class="guide">
     Enter the start and end coordinates in <strong>row,col</strong> format.
     Example: <code>0,0</code> for the top-left corner, <code>7,7</code> for the bottom-right corner.  
     Valid values are between <code>0</code> and <code>7</code> for both row and column.
   </p>
 
-  <p class="form-note"><span class="required-asterisk">*</span> Required fields</p>
   <form id="pathfinder-form" novalidate>
     <div class="required-input">
       <input name="start" placeholder="Start (e.g. 0,0)" required>

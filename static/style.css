@@ -229,3 +229,15 @@ textarea.invalid {
     font-size: 18px;
     margin-left: 6px;
 }
+
+/* =======================
+   Miscellaneous Styles
+======================= */
+
+.api-description {
+  margin-bottom: 30px;
+}
+
+.algo-title {
+  color: #777777;
+}
