@@ -12,7 +12,6 @@ import (
 )
 
 var (
-	key   = []byte("super-secret-key")
 	Store *sessions.CookieStore
 )
 
@@ -26,8 +25,7 @@ func InitEnv() {
 
 // InitDB initializes and returns a MySQL database connection.
 func InitDB() *sql.DB {
-	// Load env variables
-	InitEnv()
+	InitEnv() // Load env variables
 
 	// Config (Local DB)
 	// -----------------
@@ -66,7 +64,15 @@ func InitDB() *sql.DB {
 
 // InitSession initializes the global session store using secure cookies.
 func InitSession() {
-	Store = sessions.NewCookieStore(key)
+	InitEnv() // ensure .env is loaded
+
+	// Get session key from env
+	sessionKey := os.Getenv("SESSION_KEY")
+	if sessionKey == "" {
+		log.Fatal("SESSION_KEY is not set in environment")
+	}
+
+	Store = sessions.NewCookieStore([]byte(sessionKey))
 	Store.Options = &sessions.Options{
 		Path:     "/",
 		MaxAge:   3600 * 8, // 8 hours
