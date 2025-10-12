@@ -1,3 +1,12 @@
+// sync.Pool / sync.Once / sync.Map
+// - Example: Handle multiple user requests → reuse buffers, initialize DB once, store sessions concurrently.
+// - Shows: efficient resource reuse, one-time initialization, and thread-safe map access.
+
+// Buffers: temporary memory storage used to hold data before processing or sending.
+// 			Buffers usually reside in RAM (main memory) while the program runs.
+// Thread: a lightweight unit of execution inside a program (goroutine in Go is similar).
+// Thread-safe map access: accessing a map from multiple threads/goroutines safely without corrupting data.
+
 package Pool_Once_Map
 
 import (

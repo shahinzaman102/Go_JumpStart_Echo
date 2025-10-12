@@ -1,3 +1,7 @@
+// Channels (unbuffered)
+// - Example: Producer sends orders, consumer reads them sequentially.
+// - Shows: direct communication between goroutines.
+
 package Channels_unbuffered
 
 import (

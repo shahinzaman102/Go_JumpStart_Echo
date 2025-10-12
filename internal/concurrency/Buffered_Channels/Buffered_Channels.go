@@ -1,3 +1,8 @@
+// Buffered Channels
+// - Example: Logging system → multiple producers send logs, one goroutine writes them.
+// - Shows: decoupling sender/receiver speeds via buffering.
+// Decoupling: Sender and receiver don’t need to work at the same speed — the buffer lets the sender continue even if the receiver is slower.
+
 package Buffered_Channels
 
 import (

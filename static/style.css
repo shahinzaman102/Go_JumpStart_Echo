@@ -223,6 +223,16 @@ textarea.invalid {
     font-style: italic;
 }
 
+.form-note.timeout {
+    color: #555;
+    font-size: 0.9em;
+}
+
+.form-note.transaction {
+    color: #555;;
+    font-size: 0.9em;
+}
+
 .required-asterisk {
     color: red;
     font-weight: bold;
@@ -240,4 +250,55 @@ textarea.invalid {
 
 .algo-title {
   color: #777777;
+}
+
+/* =======================
+   View Page Styles
+======================= */
+body.view-page {
+  max-width: 800px;
+  margin: 3rem auto;
+  background-color: #f9f9f9;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+body.view-page h1 {
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 0.5rem;
+}
+
+body.view-page .edit-link {
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+/* =======================
+   Edit Page Styles
+======================= */
+body.edit-page h1 {
+  margin-bottom: 1rem;
+}
+
+/* =======================
+   WebSocket Page Styles
+======================= */
+body.websocket-page {
+  font-family: sans-serif;
+}
+
+#log {
+  background: #f4f4f4;
+  padding: 10px;
+  border: 1px solid #ccc;
+  height: 300px;
+  overflow-y: scroll;
+  white-space: pre-wrap;
+}
+
+#status {
+  font-weight: bold;
 }

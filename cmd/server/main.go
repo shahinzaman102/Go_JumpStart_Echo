@@ -40,9 +40,6 @@ func main() {
 	}()
 	log.Println("Go trace started")
 
-	// --- Ensure data directory exists ---
-	config.EnsureDataDir()
-
 	// --- Initialize DB, sessions, cache ---
 	conn := config.InitDB()
 	defer func() {
@@ -54,6 +51,9 @@ func main() {
 	data.InitCache()
 	authRepo := data.NewAuthRepo(conn)
 	handlers.Init(config.Store, authRepo)
+
+	// --- Ensure data directory exists ---
+	config.EnsureDataDir()
 
 	// --- Preload wiki templates ---
 	if err := handlers.LoadWikiTemplates(); err != nil {

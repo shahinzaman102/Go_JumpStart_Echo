@@ -1,9 +1,12 @@
 package handlers
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"html/template"
 	"log"
+	"net/http"
 	"strconv"
 	"strings"
 	"time"
@@ -188,25 +191,9 @@ func CreateOrderByUser(c echo.Context) error {
 	})
 }
 
-// GetCustomerName returns the full name of a customer by ID.
-func GetCustomerName(c echo.Context) error {
-	idStr := c.QueryParam("id")
-	id, err := strconv.ParseInt(idStr, 10, 64)
-	if err != nil || id <= 0 {
-		return c.JSON(400, map[string]string{"error": "Invalid customer ID"})
-	}
-
-	name, err := data.GetCustomerName(id)
-	if err != nil {
-		return c.JSON(500, map[string]string{"error": err.Error()})
-	}
-
-	return c.JSON(200, map[string]string{"name": name})
-}
-
 // HandleMultipleResultSets demonstrates fetching multiple result sets (albums + customers).
 func HandleMultipleResultSets(c echo.Context) error {
-	result, err := data.GetAlbumsAndCustomers()
+	result, err := data.GetAlbumsAndOrders()
 	if err != nil {
 		return c.JSON(500, map[string]string{"error": err.Error()})
 	}
@@ -217,7 +204,13 @@ func HandleMultipleResultSets(c echo.Context) error {
 func QueryWithTimeout(c echo.Context) error {
 	albums, err := data.QueryAlbumsWithTimeout(c.Request().Context())
 	if err != nil {
-		return c.JSON(504, map[string]string{"error": err.Error()})
+		// Special case: timeout
+		if errors.Is(err, context.DeadlineExceeded) {
+			return c.JSON(http.StatusGatewayTimeout, map[string]bool{"timeout": true})
+		}
+		// Other DB errors
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
-	return c.JSON(200, albums)
+
+	return c.JSON(http.StatusOK, albums)
 }

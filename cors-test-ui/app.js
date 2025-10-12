@@ -9,13 +9,13 @@ document.getElementById("getUsers").addEventListener("click", async () => {
         });
 
         if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
+            throw new Error(`HTTP error! Status: ${response.status}`); // at browser (client) console
         }
 
         const data = await response.json();
         output.textContent = JSON.stringify(data, null, 2);
     } catch (err) {
-        output.textContent = "Error: " + err.message;
-        console.error("Fetch error:", err);
+        output.textContent = "Error: " + err.message;  // at browser as response (🚫 CORS errors)
+        console.error("Fetch error:", err); // at browser (client) console (🚫 CORS errors)
     }
 });

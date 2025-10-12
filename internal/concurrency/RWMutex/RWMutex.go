@@ -1,3 +1,21 @@
+// RWMutex (read-heavy workload)
+// 👉 Real-world analogy: a product catalog service (like Amazon search).
+// - Thousands of users are reading product prices.
+// - Very few operations are updating prices.
+// - RWMutex allows all readers to run concurrently, which is crucial at scale.
+
+// Use RWMutex → when reads are frequent and writes are rare. For examples -->
+// ---------------------------------------
+// - Flight schedule lookup → many people checking flight times, few updates from the airline.
+// - E-commerce product catalog → thousands of customers viewing items, few price/stock changes.
+// - Configuration values (feature flags, app settings) → often read, rarely updated.
+// - Weather or news feeds → many users read, system occasionally updates.
+// - Dictionary / cache service → lots of lookups, rare invalidations/updates.
+// ---------------------------------------
+// RWMutex
+// - Example: Product catalog → many readers fetch prices, a few writers update prices.
+// - Shows: multiple readers can access simultaneously, but writers get exclusive access (read–write lock).
+
 package rwmutex
 
 import (

@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/shahinzaman102/Go_JumpStart_Echo/internal/models"
@@ -18,7 +19,7 @@ func InitDBConnection(conn *sql.DB) {
 
 // AllAlbums returns all albums in the database.
 func AllAlbums() ([]models.Album, error) {
-	rows, err := db.Query("SELECT id, title, artist, price, quantity FROM album")
+	rows, err := db.Query("SELECT id, title, artist, price, quantity FROM albums")
 	if err != nil {
 		return nil, err
 	}
@@ -37,7 +38,7 @@ func AllAlbums() ([]models.Album, error) {
 
 // AlbumsByArtist returns albums filtered by the artist's name.
 func AlbumsByArtist(name string) ([]models.Album, error) {
-	rows, err := db.Query("SELECT id, title, artist, price, quantity FROM album WHERE artist = ?", name)
+	rows, err := db.Query("SELECT id, title, artist, price, quantity FROM albums WHERE artist = ?", name)
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +58,7 @@ func AlbumsByArtist(name string) ([]models.Album, error) {
 // AlbumByID retrieves a single album by its ID.
 func AlbumByID(id int64) (models.Album, error) {
 	var album models.Album
-	err := db.QueryRow("SELECT id, title, artist, price, quantity FROM album WHERE id = ?", id).
+	err := db.QueryRow("SELECT id, title, artist, price, quantity FROM albums WHERE id = ?", id).
 		Scan(&album.ID, &album.Title, &album.Artist, &album.Price, &album.Quantity)
 	if err != nil {
 		return album, err
@@ -67,7 +68,7 @@ func AlbumByID(id int64) (models.Album, error) {
 
 // AddAlbum inserts a new album and returns its inserted ID.
 func AddAlbum(alb models.Album) (int64, error) {
-	result, err := db.Exec("INSERT INTO album (title, artist, price, quantity) VALUES (?, ?, ?, ?)",
+	result, err := db.Exec("INSERT INTO albums (title, artist, price, quantity) VALUES (?, ?, ?, ?)",
 		alb.Title, alb.Artist, alb.Price, alb.Quantity)
 	if err != nil {
 		return 0, err
@@ -78,7 +79,7 @@ func AddAlbum(alb models.Album) (int64, error) {
 // CanPurchase checks if the requested quantity is available for a given album.
 func CanPurchase(id int64, quantity int64) (bool, error) {
 	var enough bool
-	err := db.QueryRow("SELECT (quantity >= ?) FROM album WHERE id = ?", quantity, id).Scan(&enough)
+	err := db.QueryRow("SELECT (quantity >= ?) FROM albums WHERE id = ?", quantity, id).Scan(&enough)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return false, fmt.Errorf("unknown album ID %d", id)
@@ -94,7 +95,7 @@ func GetOrdersByUser(userID int64) ([]models.GetOrder, error) {
 
 	rows, err := db.Query(`
 		SELECT id, album_id, cust_id, quantity, date
-		FROM album_order
+		FROM album_orders
 		WHERE cust_id = ?
 		ORDER BY date DESC
 		LIMIT 10
@@ -124,18 +125,18 @@ func CreateOrderByUser(ctx context.Context, albumID, quantity, custID int64) (in
 	defer tx.Rollback()
 
 	var enough bool
-	if err := tx.QueryRowContext(ctx, "SELECT (quantity >= ?) FROM album WHERE id = ?", quantity, albumID).Scan(&enough); err != nil {
+	if err := tx.QueryRowContext(ctx, "SELECT (quantity >= ?) FROM albums WHERE id = ?", quantity, albumID).Scan(&enough); err != nil {
 		return 0, err
 	}
 	if !enough {
 		return 0, fmt.Errorf("not enough inventory")
 	}
 
-	if _, err := tx.ExecContext(ctx, "UPDATE album SET quantity = quantity - ? WHERE id = ?", quantity, albumID); err != nil {
+	if _, err := tx.ExecContext(ctx, "UPDATE albums SET quantity = quantity - ? WHERE id = ?", quantity, albumID); err != nil {
 		return 0, err
 	}
 
-	res, err := tx.ExecContext(ctx, "INSERT INTO album_order (album_id, cust_id, quantity, date) VALUES (?, ?, ?, ?)",
+	res, err := tx.ExecContext(ctx, "INSERT INTO album_orders (album_id, cust_id, quantity, date) VALUES (?, ?, ?, ?)",
 		albumID, custID, quantity, time.Now())
 	if err != nil {
 		return 0, err
@@ -152,21 +153,9 @@ func CreateOrderByUser(ctx context.Context, albumID, quantity, custID int64) (in
 	return orderID, nil
 }
 
-// GetCustomerName retrieves a customer's full name by ID.
-func GetCustomerName(id int64) (string, error) {
-	var name string
-	if err := db.QueryRow("SELECT full_name FROM customer WHERE id = ?", id).Scan(&name); err != nil {
-		if err == sql.ErrNoRows {
-			return "", fmt.Errorf("customer not found")
-		}
-		return "", err
-	}
-	return name, nil
-}
-
 // GetAlbumsAndCustomers returns albums and customers in a combined map using multiple result sets.
-func GetAlbumsAndCustomers() (map[string]any, error) {
-	rows, err := db.Query("SELECT * FROM album; SELECT * FROM customer;")
+func GetAlbumsAndOrders() (map[string]any, error) {
+	rows, err := db.Query("SELECT * FROM albums; SELECT * FROM album_orders;")
 	if err != nil {
 		return nil, err
 	}
@@ -181,26 +170,20 @@ func GetAlbumsAndCustomers() (map[string]any, error) {
 		albums = append(albums, a)
 	}
 
-	var customers []map[string]any
+	var orders []models.GetOrder
 	if rows.NextResultSet() {
+		var o models.GetOrder
 		for rows.Next() {
-			var id int64
-			var fullName, address, phone string
-			if err := rows.Scan(&id, &fullName, &address, &phone); err != nil {
+			if err := rows.Scan(&o.ID, &o.AlbumID, &o.Customer, &o.Quantity, &o.Date); err != nil {
 				return nil, err
 			}
-			customers = append(customers, map[string]any{
-				"id":       id,
-				"fullName": fullName,
-				"address":  address,
-				"phone":    phone,
-			})
+			orders = append(orders, o)
 		}
 	}
 
 	return map[string]any{
-		"albums":    albums,
-		"customers": customers,
+		"albums":       albums,
+		"album_orders": orders,
 	}, nil
 }
 
@@ -209,8 +192,17 @@ func QueryAlbumsWithTimeout(ctx context.Context) ([]models.Album, error) {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
-	rows, err := db.QueryContext(ctx, "SELECT id, title, artist, price, quantity FROM album")
+	log.Println("⏳ Starting album query with a 5-second timeout...")
+	log.Println("🐢 Simulating slow query with SLEEP(10) to trigger timeout...")
+
+	rows, err := db.QueryContext(ctx, "SELECT SLEEP(10), id, title, artist, price, quantity FROM albums")
+
 	if err != nil {
+		if ctx.Err() == context.DeadlineExceeded {
+			log.Println("⚠️  Album query timed out")
+		} else {
+			log.Printf("❌ Album query failed: %v\n", err)
+		}
 		return nil, err
 	}
 	defer rows.Close()
@@ -223,5 +215,7 @@ func QueryAlbumsWithTimeout(ctx context.Context) ([]models.Album, error) {
 		}
 		albums = append(albums, a)
 	}
+
+	log.Printf("✅ Album query finished, fetched %d rows\n", len(albums))
 	return albums, rows.Err()
 }

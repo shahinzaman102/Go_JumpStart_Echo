@@ -21,7 +21,7 @@ func TestCanPurchaseWithMock(t *testing.T) {
 	defer db.Close()
 
 	// Expect query with quantity=3, id=1 → true
-	mock.ExpectQuery("SELECT \\(quantity >= \\?\\) FROM album WHERE id = \\?").
+	mock.ExpectQuery("SELECT \\(quantity >= \\?\\) FROM albums WHERE id = \\?").
 		WithArgs(int64(3), int64(1)).
 		WillReturnRows(sqlmock.NewRows([]string{"enough"}).AddRow(true))
 

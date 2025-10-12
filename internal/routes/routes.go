@@ -75,7 +75,6 @@ func Register(e *echo.Echo) {
 	orders.POST("", handlers.CreateOrderByUser)
 
 	// --- Misc Handlers ---
-	e.GET("/customer-name", handlers.GetCustomerName)
 	e.GET("/admin/multi-query", handlers.HandleMultipleResultSets)
 
 	// --- Wiki Pages ---

@@ -1,3 +1,9 @@
+// Worker Pool
+// - Example: Image processing → multiple workers handle jobs, results collected.
+// - Shows: efficient job distribution across fixed workers, concurrency with controlled parallelism.
+// concurrency with controlled parallelism: means multiple tasks run at the same time (concurrency),
+// 											but only a fixed number of workers run in parallel, controlling resource usage.
+
 package Worker_Pool
 
 import (

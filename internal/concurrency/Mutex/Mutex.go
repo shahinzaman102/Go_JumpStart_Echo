@@ -1,3 +1,24 @@
+// Mutex (write-heavy workload)
+// 👉 Real-world analogy: a ticket booking system where everyone is trying to buy or cancel tickets.
+// - Almost every operation is a write (reserve or cancel seat).
+// - Reads (CheckAvailableSeats()) are rare.
+// - Mutex is the simplest and fastest choice here.
+
+// Use Mutex → when writes are frequent and reads are rare. For examples -->
+// ---------------------------------------
+//   - ATM transactions → multiple people depositing/withdrawing from the same account.
+//   - Shopping cart updates → users adding/removing items (frequent changes).
+//   - Bank fund transfers → balances must be updated atomically.
+//   - Gaming leaderboard updates → scores being frequently updated.
+//   - Order placement system → stock reduced every time someone buys.
+//
+// ---------------------------------------
+// Mutex
+// - Example: Ticket reservation system → concurrent booking & cancellation.
+// - Shows: safe access to shared data by locking, preventing race conditions.
+// race condition: A race condition happens when two or more goroutines access shared data at the same time,
+// 				   and the final result depends on who runs first → leading to unpredictable or incorrect outcomes.
+
 package mutex
 
 import (

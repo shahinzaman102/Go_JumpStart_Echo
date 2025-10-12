@@ -22,7 +22,7 @@ func setupTestDB(t *testing.T) *sql.DB {
 		t.Fatal(err)
 	}
 
-	_, err = db.Exec(`CREATE TABLE album (
+	_, err = db.Exec(`CREATE TABLE albums (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		title TEXT, artist TEXT, price REAL, quantity INTEGER
 	)`)
@@ -30,7 +30,7 @@ func setupTestDB(t *testing.T) *sql.DB {
 		t.Fatal(err)
 	}
 
-	_, err = db.Exec(`INSERT INTO album (title, artist, price, quantity)
+	_, err = db.Exec(`INSERT INTO albums (title, artist, price, quantity)
 		VALUES ("Go Beats", "Gopher", 9.99, 5)`)
 	if err != nil {
 		t.Fatal(err)

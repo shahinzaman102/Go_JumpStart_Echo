@@ -5,21 +5,21 @@ import (
 )
 
 // ShortestPathBruteForce finds the shortest path using DFS (backtracking).
-// Returns math.MaxInt32 if no path exists.
+// Returns math.MaxInt if no path exists.
 func ShortestPathBruteForce(grid [][]int, x, y, destX, destY int, visited [][]bool) int {
 	rows := len(grid)
 	cols := len(grid[0])
 
 	// Out of bounds or blocked/visited cell
 	if x < 0 || y < 0 || x >= rows || y >= cols {
-		return math.MaxInt32
+		return math.MaxInt
 	}
 
 	// Blocked or visited
 	if grid[x][y] == 1 || visited[x][y] {
-		return math.MaxInt32
+		return math.MaxInt
 	}
-	// math.MaxInt32 = largest 32-bit int → used here as a marker for an unreachable path.
+	// math.MaxInt = largest 32/64-bit int (platform-dependent) → used here as a marker for an unreachable path.
 
 	// Destination reached
 	if x == destX && y == destY {
@@ -30,17 +30,17 @@ func ShortestPathBruteForce(grid [][]int, x, y, destX, destY int, visited [][]bo
 	visited[x][y] = true
 
 	// Explore 4 directions: left, right, up, down
-	left := ShortestPathBruteForce(grid, x, y-1, destX, destY, visited)
-	right := ShortestPathBruteForce(grid, x, y+1, destX, destY, visited)
-	up := ShortestPathBruteForce(grid, x-1, y, destX, destY, visited)
-	down := ShortestPathBruteForce(grid, x+1, y, destX, destY, visited)
+	left := ShortestPathBruteForce(grid, x-1, y, destX, destY, visited)
+	right := ShortestPathBruteForce(grid, x+1, y, destX, destY, visited)
+	up := ShortestPathBruteForce(grid, x, y+1, destX, destY, visited)
+	down := ShortestPathBruteForce(grid, x, y-1, destX, destY, visited)
 
 	// Unmark current cell for backtracking
 	visited[x][y] = false
 
 	minPath := min(down, up, right, left)
-	if minPath == math.MaxInt32 {
-		return math.MaxInt32
+	if minPath == math.MaxInt {
+		return math.MaxInt
 	}
 	return 1 + minPath
 }

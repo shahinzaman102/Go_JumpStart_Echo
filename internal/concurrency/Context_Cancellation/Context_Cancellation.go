@@ -1,3 +1,7 @@
+// Context Cancellation
+// - Example: Fetch user data with a timeout → operation cancelled if it takes too long.
+// - Shows: using context to control and cancel long-running goroutines.
+
 package Context_Cancellation
 
 import (
@@ -32,7 +36,7 @@ func Run() {
 	result := <-resultChan
 	fmt.Println(result)
 
-	// Send a hint for learners in the browser
+	// Hint to show in the browser
 	if ctx.Err() != nil {
 		fmt.Println("💡 Hint: Increase timeout to 4*time.Second to fetch successfully ✅")
 	}

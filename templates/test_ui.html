@@ -154,7 +154,11 @@ to track authentication and redirect users based on their original requested pat
 <p class="api-description"><em>This API serves album data from a MySQL database.</em></p>
 <a href="/albums" target="_blank">GET /albums</a><br>
 <a href="/albums/artist/John%20Coltrane" target="_blank">GET /albums/artist/{name}</a><br>
-<a href="/albums/timeout" target="_blank">GET /albums/timeout</a><br><br>
+<a href="/albums/timeout" target="_blank">GET /albums/timeout</a><br>
+<span class="form-note timeout">
+    This endpoint "GET /albums/timeout" simulates a slow query (10s) with a 5s timeout to **trigger a timeout**. 
+    The response will be {"timeout": true}.
+</span><br><br>
 <form id="get-album-by-id-form" novalidate>
     <div class="required-input">
         <input name="id" placeholder="Album ID" required>
@@ -194,6 +198,9 @@ to track authentication and redirect users based on their original requested pat
         <span class="required-asterisk">*</span>
     </div>
     <button type="submit">POST /albums</button>
+    <span class="form-note transaction">
+        This endpoint "POST /albums" creates a new album and uses a **database transaction** to ensure data consistency.
+    </span>
 </form>
 <pre></pre>
 </section>
@@ -220,10 +227,6 @@ and orders are tied to the authenticated user, so each user only sees their own 
         <input name="quantity" placeholder="Quantity" required>
         <span class="required-asterisk">*</span>
     </div>
-    <div class="required-input">
-        <input name="customer_id" placeholder="Customer ID" required>
-        <span class="required-asterisk">*</span>
-    </div>
     <button type="submit">POST /orders</button>
 </form>
 <pre></pre>
@@ -232,16 +235,7 @@ and orders are tied to the authenticated user, so each user only sees their own 
 <!-- ---------------- Misc ---------------- -->
 <section>
 <h2>Misc Endpoints</h2>
-<p class="form-note"><span class="required-asterisk">*</span> Required fields</p>
 <p class="api-description"><em>This API serves customer data from a MySQL database.</em></p>
-<form id="customer-name-form" novalidate>
-    <div class="required-input">
-        <input name="id" placeholder="Customer ID" required>
-        <span class="required-asterisk">*</span>
-    </div>
-    <button type="submit">GET /customer-name?id={id}</button>
-</form>
-<pre></pre>
 <a href="/admin/multi-query" target="_blank">GET /admin/multi-query</a>
 </section>
 

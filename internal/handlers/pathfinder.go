@@ -97,7 +97,7 @@ func Pathfinder(c echo.Context) error {
 			visited[r] = make([]bool, len(grid[0]))
 		}
 		path := pathfinder.ShortestPathBruteForce(grid, startX, startY, destX, destY, visited)
-		if path == math.MaxInt32 {
+		if path == math.MaxInt {
 			path = -1
 		}
 		brutePathLen = path

@@ -1,8 +1,13 @@
+// Goroutines + WaitGroup
+// - Example: Multiple users making payment requests.
+// - Shows: spawning goroutines, waiting for completion.
+// spawning goroutines: means creating and starting new lightweight threads of execution by prefixing a function call with the keyword go.
+
 package Goroutines_WaitGroup
 
 import (
 	"fmt"
-	"sync"
+	"sync" // see about this at below -->
 	"time"
 )
 
@@ -52,3 +57,25 @@ func Run() {
 	wg.Wait()
 	fmt.Println("All payment requests handled ✅")
 }
+
+// ----------------------------------------------------
+// ✅ Primitives → the basic building blocks provided by a language or library to control concurrency (e.g., Mutex, RWMutex, WaitGroup).
+//     Think of them as the "raw ingredients."
+// ✅ A package like sync is called a concurrency package or concurrency toolkit →
+// 	it provides these primitives (tools) for managing goroutines safely.
+
+// So:
+//  - Primitives = the tools (Mutex, RWMutex, etc.).
+//  - sync = the package (toolbox) that gives you those tools.
+// ----------------------------------------------------
+// Key tools inside sync:
+
+//  - sync.Mutex → mutual exclusion lock (one goroutine at a time).
+//  - sync.RWMutex → read/write lock (many readers OR one writer).
+//  - sync.WaitGroup → wait until a group of goroutines finish.
+//  - sync.Once → ensures something runs only once (even across goroutines).
+//  - sync.Cond → condition variable (goroutines wait for signals).
+//  - sync.Map → a concurrency-safe map (no need for manual locking).
+//  - sync.Pool → object reuse to reduce allocations (performance).
+
+// 👉 In short: sync = Go’s toolbox for concurrency control.

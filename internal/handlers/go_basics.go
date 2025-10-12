@@ -38,21 +38,6 @@ func GoBasics(c echo.Context) error {
 
 	appendLine("")
 
-	// --- Switch ---
-	day := 2
-	switch day {
-	case 1:
-		appendLine("Switch Case: Friday")
-	case 2:
-		appendLine("Switch Case: Saturday")
-	case 3:
-		appendLine("Switch Case: Sunday")
-	default:
-		appendLine("Switch Case: Unknown Day")
-	}
-
-	appendLine("")
-
 	// --- iota ---
 	const (
 		First = iota

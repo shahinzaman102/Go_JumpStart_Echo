@@ -11,9 +11,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-var (
-	Store *sessions.CookieStore
-)
+var Store *sessions.CookieStore
 
 // InitEnv loads .env file so os.Getenv() works
 func InitEnv() {
@@ -27,26 +25,12 @@ func InitEnv() {
 func InitDB() *sql.DB {
 	InitEnv() // Load env variables
 
-	// Config (Local DB)
-	// -----------------
-	// user := os.Getenv("DBUSER")
-	// pass := os.Getenv("DBPASS")
-	// name := os.Getenv("DBNAME")
-
-	// DSN (Local DB)
-	// --------------
-	// dsn := fmt.Sprintf("%s:%s@tcp(127.0.0.1:3306)/%s?parseTime=true&multiStatements=true", user, pass, name)
-
-	// Config (freesqldatabase.com)
-	// ----------------------------
 	user := os.Getenv("DBUSER")
 	pass := os.Getenv("DBPASS")
+	name := os.Getenv("DBNAME")
 	host := os.Getenv("DBHOST")
 	port := os.Getenv("DBPORT")
-	name := os.Getenv("DBNAME")
 
-	// DSN (freesqldatabase.com)
-	// -------------------------
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true&multiStatements=true", user, pass, host, port, name)
 
 	db, err := sql.Open("mysql", dsn)

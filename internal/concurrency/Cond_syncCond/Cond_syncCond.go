@@ -1,3 +1,7 @@
+// Cond / sync.Cond
+// - Example: Producer-consumer → consumers wait for items, producer signals availability.
+// - Shows: coordinating goroutines using condition variables for signaling and waiting.
+
 package Cond_syncCond
 
 import (
