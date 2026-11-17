@@ -7,7 +7,7 @@
 | Architecture              | Monolithic                                       |
 | Backend                   | Go (Echo Framework)                              |
 | API                       | REST                                             |
-| Databases                 | MySQL                                            |
+| Databases                 | PostgreSQL                                       |
 | Tracing & Profiling       | `runtime/trace`, `net/http/pprof`                |
 | Testing                   | `testing` package                                |
 | Caching                   | bigcache                                         |

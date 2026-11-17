@@ -17,8 +17,6 @@ import (
 	"github.com/shahinzaman102/Go_JumpStart_Echo/internal/routes"
 
 	_ "net/http/pprof"
-
-	_ "github.com/go-sql-driver/mysql"
 )
 
 func main() {

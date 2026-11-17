@@ -19,7 +19,7 @@ func NewAuthRepo(db *sql.DB) *AuthRepo {
 // VerifyUser checks if the username/password combination is valid.
 func (repo *AuthRepo) VerifyUser(username, password string) (bool, error) {
 	var hash string
-	err := repo.DB.QueryRow("SELECT password FROM users WHERE username = ?", username).Scan(&hash)
+	err := repo.DB.QueryRow("SELECT password FROM users WHERE username = $1", username).Scan(&hash)
 	if err != nil {
 		return false, err
 	}
@@ -35,7 +35,7 @@ func CheckPasswordHash(password, hash string) bool {
 // GetUserID retrieves the ID of a user by username.
 func (repo *AuthRepo) GetUserID(username string) (int64, error) {
 	var id int64
-	err := repo.DB.QueryRow("SELECT id FROM users WHERE username = ?", username).Scan(&id)
+	err := repo.DB.QueryRow("SELECT id FROM users WHERE username = $1", username).Scan(&id)
 	if err != nil {
 		return 0, err
 	}

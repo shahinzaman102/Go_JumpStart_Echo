@@ -6,51 +6,59 @@ import (
 	"log"
 	"os"
 
-	_ "github.com/go-sql-driver/mysql" // ensure mysql driver is imported
 	"github.com/gorilla/sessions"
 	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
 )
 
 var Store *sessions.CookieStore
 
-// InitEnv loads .env file so os.Getenv() works
+// InitEnv loads .env file so os.Getenv() works.
 func InitEnv() {
-	err := godotenv.Load(".env") // adjust path if needed
+	err := godotenv.Load(".env")
 	if err != nil {
 		log.Println("⚠️ No .env file found, relying on environment variables")
 	}
 }
 
-// InitDB initializes and returns a MySQL database connection.
+// InitDB initializes and returns a PostgreSQL database connection.
 func InitDB() *sql.DB {
-	InitEnv() // Load env variables
+	InitEnv()
 
 	user := os.Getenv("DBUSER")
 	pass := os.Getenv("DBPASS")
 	name := os.Getenv("DBNAME")
 	host := os.Getenv("DBHOST")
 	port := os.Getenv("DBPORT")
+	sslmode := os.Getenv("DBSSLMODE")
 
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true&multiStatements=true", user, pass, host, port, name)
+	if sslmode == "" {
+		sslmode = "disable"
+	}
 
-	db, err := sql.Open("mysql", dsn)
+	dsn := fmt.Sprintf(
+		"host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
+		host, port, user, pass, name, sslmode,
+	)
+
+	db, err := sql.Open("postgres", dsn)
 	if err != nil {
-		log.Fatal("failed to open DB: ", err)
+		log.Fatal("failed to open PostgreSQL DB: ", err)
 	}
 
 	if err := db.Ping(); err != nil {
-		log.Fatal("failed to connect to DB: ", err)
+		db.Close()
+		log.Fatal("failed to connect to PostgreSQL DB: ", err)
 	}
 
-	log.Println("Connected to DB ✅")
+	log.Println("Connected to PostgreSQL DB ✅")
 	return db
 }
 
 // InitSession initializes the global session store using secure cookies.
 func InitSession() {
-	InitEnv() // ensure .env is loaded
+	InitEnv()
 
-	// Get session key from env
 	sessionKey := os.Getenv("SESSION_KEY")
 	if sessionKey == "" {
 		log.Fatal("SESSION_KEY is not set in environment")
@@ -59,13 +67,13 @@ func InitSession() {
 	Store = sessions.NewCookieStore([]byte(sessionKey))
 	Store.Options = &sessions.Options{
 		Path:     "/",
-		MaxAge:   3600 * 8, // 8 hours
+		MaxAge:   3600 * 8,
 		HttpOnly: true,
 		Secure:   false, // set true if using HTTPS
 	}
 }
 
-// EnsureDataDir creates the data directory with restricted permissions (owner-only).
+// EnsureDataDir creates the data directory with restricted permissions.
 func EnsureDataDir() {
 	if err := os.MkdirAll("data", 0700); err != nil {
 		log.Fatalf("failed to create data dir: %v", err)

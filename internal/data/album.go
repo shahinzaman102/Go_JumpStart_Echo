@@ -38,7 +38,7 @@ func AllAlbums() ([]models.Album, error) {
 
 // AlbumsByArtist returns albums filtered by the artist's name.
 func AlbumsByArtist(name string) ([]models.Album, error) {
-	rows, err := db.Query("SELECT id, title, artist, price, quantity FROM albums WHERE artist = ?", name)
+	rows, err := db.Query("SELECT id, title, artist, price, quantity FROM albums WHERE artist = $1", name)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +58,7 @@ func AlbumsByArtist(name string) ([]models.Album, error) {
 // AlbumByID retrieves a single album by its ID.
 func AlbumByID(id int64) (models.Album, error) {
 	var album models.Album
-	err := db.QueryRow("SELECT id, title, artist, price, quantity FROM albums WHERE id = ?", id).
+	err := db.QueryRow("SELECT id, title, artist, price, quantity FROM albums WHERE id = $1", id).
 		Scan(&album.ID, &album.Title, &album.Artist, &album.Price, &album.Quantity)
 	if err != nil {
 		return album, err
@@ -68,18 +68,29 @@ func AlbumByID(id int64) (models.Album, error) {
 
 // AddAlbum inserts a new album and returns its inserted ID.
 func AddAlbum(alb models.Album) (int64, error) {
-	result, err := db.Exec("INSERT INTO albums (title, artist, price, quantity) VALUES (?, ?, ?, ?)",
-		alb.Title, alb.Artist, alb.Price, alb.Quantity)
+	var id int64
+
+	err := db.QueryRow(
+		`INSERT INTO albums (title, artist, price, quantity)
+		 VALUES ($1, $2, $3, $4)
+		 RETURNING id`,
+		alb.Title,
+		alb.Artist,
+		alb.Price,
+		alb.Quantity,
+	).Scan(&id)
+
 	if err != nil {
 		return 0, err
 	}
-	return result.LastInsertId()
+
+	return id, nil
 }
 
 // CanPurchase checks if the requested quantity is available for a given album.
 func CanPurchase(id int64, quantity int64) (bool, error) {
 	var enough bool
-	err := db.QueryRow("SELECT (quantity >= ?) FROM albums WHERE id = ?", quantity, id).Scan(&enough)
+	err := db.QueryRow("SELECT (quantity >= $1) FROM albums WHERE id = $2", quantity, id).Scan(&enough)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return false, fmt.Errorf("unknown album ID %d", id)
@@ -96,7 +107,7 @@ func GetOrdersByUser(userID int64) ([]models.GetOrder, error) {
 	rows, err := db.Query(`
 		SELECT id, album_id, cust_id, quantity, date
 		FROM album_orders
-		WHERE cust_id = ?
+		WHERE cust_id = $1
 		ORDER BY date DESC
 		LIMIT 10
 	`, userID)
@@ -125,24 +136,40 @@ func CreateOrderByUser(ctx context.Context, albumID, quantity, custID int64) (in
 	defer tx.Rollback()
 
 	var enough bool
-	if err := tx.QueryRowContext(ctx, "SELECT (quantity >= ?) FROM albums WHERE id = ?", quantity, albumID).Scan(&enough); err != nil {
+	if err := tx.QueryRowContext(
+		ctx,
+		"SELECT (quantity >= $1) FROM albums WHERE id = $2 FOR UPDATE",
+		quantity,
+		albumID,
+	).Scan(&enough); err != nil {
 		return 0, err
 	}
+
 	if !enough {
 		return 0, fmt.Errorf("not enough inventory")
 	}
 
-	if _, err := tx.ExecContext(ctx, "UPDATE albums SET quantity = quantity - ? WHERE id = ?", quantity, albumID); err != nil {
+	if _, err := tx.ExecContext(
+		ctx,
+		"UPDATE albums SET quantity = quantity - $1 WHERE id = $2",
+		quantity,
+		albumID,
+	); err != nil {
 		return 0, err
 	}
 
-	res, err := tx.ExecContext(ctx, "INSERT INTO album_orders (album_id, cust_id, quantity, date) VALUES (?, ?, ?, ?)",
-		albumID, custID, quantity, time.Now())
-	if err != nil {
-		return 0, err
-	}
+	var orderID int64
+	err = tx.QueryRowContext(
+		ctx,
+		`INSERT INTO album_orders (album_id, cust_id, quantity, date)
+		 VALUES ($1, $2, $3, $4)
+		 RETURNING id`,
+		albumID,
+		custID,
+		quantity,
+		time.Now(),
+	).Scan(&orderID)
 
-	orderID, err := res.LastInsertId()
 	if err != nil {
 		return 0, err
 	}
@@ -150,6 +177,7 @@ func CreateOrderByUser(ctx context.Context, albumID, quantity, custID int64) (in
 	if err := tx.Commit(); err != nil {
 		return 0, err
 	}
+
 	return orderID, nil
 }
 
@@ -193,29 +221,49 @@ func QueryAlbumsWithTimeout(ctx context.Context) ([]models.Album, error) {
 	defer cancel()
 
 	log.Println("⏳ Starting album query with a 5-second timeout...")
-	log.Println("🐢 Simulating slow query with SLEEP(10) to trigger timeout...")
+	log.Println("🐢 Simulating slow query with pg_sleep(10) to trigger timeout...")
 
-	rows, err := db.QueryContext(ctx, "SELECT SLEEP(10), id, title, artist, price, quantity FROM albums")
+	rows, err := db.QueryContext(ctx, `
+		SELECT id, title, artist, price, quantity
+		FROM albums, (SELECT pg_sleep(10)) AS delay
+	`)
 
 	if err != nil {
 		if ctx.Err() == context.DeadlineExceeded {
-			log.Println("⚠️  Album query timed out")
-		} else {
-			log.Printf("❌ Album query failed: %v\n", err)
+			log.Println("⚠️ Album query timed out")
+			return nil, ctx.Err()
 		}
+
+		log.Printf("❌ Album query failed: %v\n", err)
 		return nil, err
 	}
 	defer rows.Close()
 
 	var albums []models.Album
+
 	for rows.Next() {
 		var a models.Album
-		if err := rows.Scan(&a.ID, &a.Title, &a.Artist, &a.Price, &a.Quantity); err != nil {
+
+		if err := rows.Scan(
+			&a.ID,
+			&a.Title,
+			&a.Artist,
+			&a.Price,
+			&a.Quantity,
+		); err != nil {
 			return nil, err
 		}
+
 		albums = append(albums, a)
 	}
 
+	if err := rows.Err(); err != nil {
+		if ctx.Err() == context.DeadlineExceeded {
+			return nil, ctx.Err()
+		}
+		return nil, err
+	}
+
 	log.Printf("✅ Album query finished, fetched %d rows\n", len(albums))
-	return albums, rows.Err()
+	return albums, nil
 }

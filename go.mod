@@ -5,17 +5,16 @@ go 1.25.0
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/allegro/bigcache/v3 v3.1.0
-	github.com/go-sql-driver/mysql v1.10.0
 	github.com/gorilla/sessions v1.4.0
 	github.com/gorilla/websocket v1.5.3
 	github.com/joho/godotenv v1.5.1
 	github.com/labstack/echo/v4 v4.15.2
+	github.com/lib/pq v1.12.3
 	golang.org/x/crypto v0.51.0
 	modernc.org/sqlite v1.38.2
 )
 
 require (
-	filippo.io/edwards25519 v1.2.0 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/gorilla/securecookie v1.1.2 // indirect

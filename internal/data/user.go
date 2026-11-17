@@ -31,7 +31,7 @@ func GetAllUsers() ([]models.User, error) {
 // GetUserByID fetches a user by their ID.
 func GetUserByID(id int) (*models.User, error) {
 	var u models.User
-	err := db.QueryRow(`SELECT id, username, password, created_at FROM users WHERE id = ?`, id).
+	err := db.QueryRow(`SELECT id, username, password, created_at FROM users WHERE id = $1`, id).
 		Scan(&u.ID, &u.Username, &u.Password, &u.CreatedAt)
 	if err != nil {
 		return nil, err
@@ -45,12 +45,23 @@ func CreateUser(username, password string) (int64, error) {
 	if err != nil {
 		return 0, err
 	}
-	result, err := db.Exec(`INSERT INTO users (username, password, created_at) VALUES (?, ?, ?)`,
-		username, hashed, time.Now())
+
+	var id int64
+
+	err = db.QueryRow(
+		`INSERT INTO users (username, password, created_at)
+		 VALUES ($1, $2, $3)
+		 RETURNING id`,
+		username,
+		hashed,
+		time.Now(),
+	).Scan(&id)
+
 	if err != nil {
 		return 0, err
 	}
-	return result.LastInsertId()
+
+	return id, nil
 }
 
 // HashPassword generates a bcrypt hash of the password.
@@ -67,12 +78,12 @@ func UpdateUserByID(id int, username, password string) error {
 		if err != nil {
 			return err
 		}
-		_, err = db.Exec(`UPDATE users SET username = ?, password = ? WHERE id = ?`, username, hashed, id)
+		_, err = db.Exec(`UPDATE users SET username = $1, password = $2 WHERE id = $3`, username, hashed, id)
 		return err
 	}
 
 	if username != "" {
-		_, err := db.Exec(`UPDATE users SET username = ? WHERE id = ?`, username, id)
+		_, err := db.Exec(`UPDATE users SET username = $1 WHERE id = $2`, username, id)
 		return err
 	}
 
@@ -81,7 +92,7 @@ func UpdateUserByID(id int, username, password string) error {
 		if err != nil {
 			return err
 		}
-		_, err = db.Exec(`UPDATE users SET password = ? WHERE id = ?`, hashed, id)
+		_, err = db.Exec(`UPDATE users SET password = $1 WHERE id = $2`, hashed, id)
 		return err
 	}
 
@@ -90,6 +101,6 @@ func UpdateUserByID(id int, username, password string) error {
 
 // DeleteUserByID removes a user from the database by ID.
 func DeleteUserByID(id int) error {
-	_, err := db.Exec(`DELETE FROM users WHERE id = ?`, id)
+	_, err := db.Exec(`DELETE FROM users WHERE id = $1`, id)
 	return err
 }
